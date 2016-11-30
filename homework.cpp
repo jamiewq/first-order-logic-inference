@@ -127,7 +127,11 @@ string SentenceDNF::stringify() {
 }
 
 void SentenceFOL::generalToCNF() {
-	if(!single) {
+	bool children_changed = true;
+	while( !single && children_changed ) {
+			OPERATOR_TYPE op1_op = op1->operat;
+			OPERATOR_TYPE op2_op = op2->operat;
+			children_changed = false;
 			if(operat == OR) {
 				if(!op1->isSingle() && op1->operat == AND) {
 					//(t1.op1 & t1.op2) | (t2.op1 |/& .....)
@@ -147,11 +151,15 @@ void SentenceFOL::generalToCNF() {
 					op2 = new SentenceFOL(OR, *t1, *(t2->op2));
 					operat = AND;
 				}
-
 			}
 			// Should it be out of the if(operat == OR) ?
 			if(op1) op1->generalToCNF();
 			if(op2) op2->generalToCNF();
+
+
+			if( (op1_op != op1->operat) || (op2_op != op2->operat)) {
+				children_changed = true;
+			}
 	}
 }
 
@@ -184,9 +192,17 @@ void SentenceFOL::walkInNegation() {
 }
 
 bool SentenceFOL::addToKB(SET_TYPE set) {
+	// cout <<"origin"<<endl;
+	// cout<<stringify()<<endl;
 	eliminateImplication();
+	// cout <<"eliminateImplication"<<endl;
+	// cout<<stringify()<<endl;
 	walkInNegation();
+	// cout <<"walkInNegation"<<endl;
+	// cout<<stringify()<<endl;
 	generalToCNF();
+	// cout <<"generalToCNF"<<endl;
+	// cout<<stringify()<<endl;
 	putCNFIntoSentenceStore(set);
 	return true;
 }

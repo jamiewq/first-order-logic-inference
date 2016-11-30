@@ -1270,9 +1270,9 @@ yyreduce:
         case 2:
 #line 86 "fol.y" /* yacc.c:1661  */
     {
-        /* console out put
+
           cout<<"add to KB"<<current_set_to_put<<endl;
-          */
+
           if(current_set_to_put == AUX_SET) {
             (yyvsp[0].sfol)->addToKB(current_set_to_put);
           }
@@ -1281,9 +1281,9 @@ yyreduce:
             (yyvsp[0].sfol)->negate();
             (yyvsp[0].sfol)->addToKB(current_set_to_put);
           }
-          /* console out put
-          cout<<$1->stringify()<<endl;
-          */
+
+          cout<<(yyvsp[0].sfol)->stringify()<<endl;
+
           inside_literal_universal_name_to_id_map.clear();
           (yyval.sfol) = (yyvsp[0].sfol);
         }
@@ -1764,7 +1764,7 @@ int main(int, char**) {
                 }
                 cout <<endl;
               }
-              getchar();
+              //getchar();
 
             }
             else if (t==2) {
@@ -1773,13 +1773,14 @@ int main(int, char**) {
             }
           }
         }
+
         if(!resolved && last == set_support.size()) {
 
           cout<<"CANNOT GO FORWARD !!!! WE CANNOT RESOLVE THIS SENTENCE:" <<endl;
           cout<<sid<<". "<<s.stringify()<<endl;
 
           out_file << "FALSE" <<endl;
-          getchar();
+          //getchar();
           break;
         }
       }
@@ -1789,7 +1790,7 @@ int main(int, char**) {
         cout<<"END, GET CONFLICT" <<endl;
 
         out_file << "TRUE" <<endl;
-        getchar();
+        //getchar();
       }
 
     }

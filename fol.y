@@ -84,9 +84,9 @@ SET_TYPE current_set_to_put = AUX_SET;
 %%
 sentence:
         exp {
-        /* console out put
+
           cout<<"add to KB"<<current_set_to_put<<endl;
-          */
+
           if(current_set_to_put == AUX_SET) {
             $1->addToKB(current_set_to_put);
           }
@@ -95,9 +95,9 @@ sentence:
             $1->negate();
             $1->addToKB(current_set_to_put);
           }
-          /* console out put
+
           cout<<$1->stringify()<<endl;
-          */
+
           inside_literal_universal_name_to_id_map.clear();
           $$ = $1;
         }
@@ -308,7 +308,7 @@ int main(int, char**) {
                 }
                 cout <<endl;
               }
-              getchar();
+              //getchar();
 
             }
             else if (t==2) {
@@ -319,12 +319,12 @@ int main(int, char**) {
         }
 
         if(!resolved && last == set_support.size()) {
-        
+
           cout<<"CANNOT GO FORWARD !!!! WE CANNOT RESOLVE THIS SENTENCE:" <<endl;
           cout<<sid<<". "<<s.stringify()<<endl;
 
           out_file << "FALSE" <<endl;
-          getchar();
+          //getchar();
           break;
         }
       }
@@ -334,7 +334,7 @@ int main(int, char**) {
         cout<<"END, GET CONFLICT" <<endl;
 
         out_file << "TRUE" <<endl;
-        getchar();
+        //getchar();
       }
 
     }
