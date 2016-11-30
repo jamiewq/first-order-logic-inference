@@ -494,10 +494,12 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 			vector<Element>& elems2 = list2[i].getElements();
 
 			// Find substitution
-			if(find_a_substitution(elems1, elems2, replace1, replace2)) list2_matched_position = i;
-
-			// Apply substitution
-			apply_a_substitution(list1, list2, replace1, replace2);
+			if(find_a_substitution(elems1, elems2, replace1, replace2)) {
+				list2_matched_position = i;
+				// Apply substitution
+				apply_a_substitution(list1, list2, replace1, replace2);
+				break;
+			}
 
 		}
 	}
@@ -509,11 +511,11 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 
 		EliminateExactlySameLiterals(list1, list2);
 
-		// cout << "-----------after EliminateExactlySameLiterals" <<endl;
-		// cout << "Literal in sentence1"<<endl;
-		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
-		// cout << "Literal in sentence2"<<endl;
-		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
+		cout << "-----------after EliminateExactlySameLiterals" <<endl;
+		cout << "Literal in sentence1"<<endl;
+		for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
+		cout << "Literal in sentence2"<<endl;
+		for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
 
 		list1.insert( list1.end(), list2.begin(), list2.end() );
 		if(list1.size() == 0) return 2;

@@ -1652,13 +1652,13 @@ int main(int, char**) {
             vector<SENTENCE_ID_TYPE> foundlist = myIndex.find(literal.getPredictId(), !literal.getTrueOrNegated());
             for(int j = 0; j < foundlist.size(); j++) {
               SENTENCE_ID_TYPE id = foundlist[j];
-              if( s.isMyParent(id) ) continue;
+            //   if( s.isMyParent(id) ) continue;
               if( s.getLiterals().size() != 1 && sentenceStore[id].getLiterals().size() != 1) continue;
               int t = resolution_and_put_result_into_support_set(sid, i, id, AUX_SET, set_aux);
               // resolved successfully
               if(t == 1) {
                 resolved = true;
-                /*
+
                 for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
                   cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify();
                   cout << "\t parent : ";
@@ -1667,12 +1667,12 @@ int main(int, char**) {
                   }
                   cout <<endl;
                 }
-                getchar();
-                */
+                // getchar();
+
               }
               else if (t==2) {
                 cout<<"Invalid input, KB has Conflict" <<endl;
-                break;
+                return 1;
               }
             }
           }
@@ -1749,7 +1749,7 @@ int main(int, char**) {
               vector<SENTENCE_ID_TYPE> foundlist = myIndex.find(literal.getPredictId(), !literal.getTrueOrNegated());
               for(int j = 0; j < foundlist.size() && !conflict_found; j++) {
                 SENTENCE_ID_TYPE id = foundlist[j];
-                if( s.isMyParent(id) ) continue;
+                // if( s.isMyParent(id) ) continue;
                 if( s.getLiterals().size() != 1 && sentenceStore[id].getLiterals().size() != 1) continue;
                 int t = resolution_and_put_result_into_support_set(sid, i, id, SUPPORT_SET, set_support);
                 // resolved successfully
@@ -1764,7 +1764,7 @@ int main(int, char**) {
                     }
                     cout <<endl;
                   }
-                  getchar();
+                //   getchar();
 
                 }
                 else if (t==2) {

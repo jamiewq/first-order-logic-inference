@@ -1,3 +1,9 @@
+1
+A(Cindy, Cindy)
+1
+(A(x,x) | A(Cindy,u))
+
+True
 
 1
 A(y,z,y,Bob)
@@ -16,42 +22,11 @@ False
 1
 A(Cindy, Kate)
 2
-A(x,x) | A(Cindy, u)
+(A(x,x) | A(Cindy, u))
 (~A(Bob, Bob))
 
 True
 
-6
-G(Tom)
-H(John)
-(~H(Alice))
-(~H(John))
-G(Bob)
-F(Bob)
-14
-(A(x) => H(x))
-(D(x,y) => (~H(y)))
-((B(x,y) & C(x,y)) => A(x))
-B(John,Alice)
-B(John,Bob)
-((D(x,y) & Q(y)) => C(x,y))
-D(John,Alice)
-Q(Bob)
-D(John,Bob)
-(F(x) => G(x))
-(G(x) => H(x))
-(H(x) => F(x))
-(R(x) => H(x))
-R(Tom)
-
-output:
-
-TRUE
-TRUE
-TRUE
-FALSE
-FALSE
-FALSE
 
 2
 Ancestor(Liz,Billy)
