@@ -1,3 +1,26 @@
+
+1
+A(y,z,y,Bob)
+1
+A(Bob, x, x, u)
+
+True
+
+1
+A(Bob, Alice)
+1
+A(x,x)
+
+False
+
+1
+A(Cindy, Kate)
+2
+A(x,x) | A(Cindy, u)
+(~A(Bob, Bob))
+
+True
+
 6
 G(Tom)
 H(John)
@@ -29,12 +52,6 @@ TRUE
 FALSE
 FALSE
 FALSE
-
-
-1
-A(y,z,y,Bob)
-1
-A(Bob, x, x, u)
 
 2
 Ancestor(Liz,Billy)

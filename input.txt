@@ -1,8 +1,5 @@
 1
-D(Bob)
-5
-(A(x) | B(y))
-((~B(XX)) | A(y))
-(C(x) | B(TT))
-((~B(x)) | C(y))
-(((~A(x))|(~C(y))) | D(z))
+A(Cindy, Kate)
+2
+(A(x,x) | A(Cindy, u))
+(~A(Bob, Bob))

@@ -275,23 +275,6 @@ bool find_a_substitution(
 	unordered_map<Element, Element>& replace1,
 	unordered_map<Element, Element>& replace2 ) {
 
-		// for(int j = 0; j < elems1.size(); j++) {
-		// 	Element& elem1 = elems1[j];
-		// 	Element& elem2 = elems2[j];
-		// 	if( (elem1.isUniverse && !elem2.isUniverse) || (elem2.isUniverse && !elem1.isUniverse)) {
-		// 		if(elem1.isUniverse) replace1[elem1] = elem2;
-		// 		else replace2[elem2] = elem1;
-		// 	}
-		// 	else if(!elem1.isUniverse && !elem2.isUniverse) {
-		// 		// Conflict! skip this literal
-		// 		// As we cannot assign val to a constant
-		// 		if(elem1.constNname != elem2.constNname) return false;
-		// 	}
-		// 	else {
-		// 		replace1[elem1] = elem2;
-		// 	}
-		// }
-		// return true;
 		int count = elems1.size();
 
 		vector< vector<Element> > sets;
@@ -335,13 +318,15 @@ bool find_a_substitution(
 					else {
 						long setid1 = belongs_to_set[e1];
 						long setid2 = belongs_to_set[e2];
-						vector<Element>& set1 = sets[setid1];
-						vector<Element>& set2 = sets[setid2];
-						for(auto lt = set2.begin(); lt != set2.end(); lt++) {
-							belongs_to_set[(*lt).stringify()] = setid1;
-							set1.push_back(*lt);
+						if(setid1 != setid2) {
+							vector<Element>& set1 = sets[setid1];
+							vector<Element>& set2 = sets[setid2];
+							for(auto lt = set2.begin(); lt != set2.end(); lt++) {
+								belongs_to_set[(*lt).stringify()] = setid1;
+								set1.push_back(*lt);
+							}
+							set2.clear();
 						}
-						set2.clear();
 					}
 				}
 			}
