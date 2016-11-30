@@ -95,35 +95,42 @@ string SentenceFOL:: stringify() {
 
 string SentenceDNF::stringify() {
 	stringstream ss;
-	int univeral_id_local_represent = 0;
-	unordered_map<int, int> find_local_represent;
 	for(int i = 0; i < list.size(); i++) {
-		Literal& lit = list[i];
-		if(!lit.getTrueOrNegated()) ss <<"~";
-		for(auto lt = predictStore.begin(); lt != predictStore.end(); lt++) {
-			if(lt->second == lit.getPredictId())
-				ss<< lt->first;
-		}
-		ss<<"(";
-		for (int j = 0; j < lit.paramList.size(); ++j)
-		{
-			if(lit.paramList[j].isUniverse) {
-				if(find_local_represent.find(lit.paramList[j].universeId) == find_local_represent.end()) {
-						find_local_represent[lit.paramList[j].universeId] = univeral_id_local_represent;
-						ss <<"u"<<univeral_id_local_represent++;
-				}
-				else {
-						ss <<"u"<<find_local_represent[lit.paramList[j].universeId];
-				}
-			}
-			else ss<<lit.paramList[j].constNname;
-			if(j != lit.paramList.size() - 1) ss<<",";
-		}
-		ss<<")";
-
+		ss << list[i].stringify();
 		if(i != list.size()-1) ss<<" | ";
 	}
 	return ss.str();
+	//
+	// stringstream ss;
+	// int univeral_id_local_represent = 0;
+	// unordered_map<int, int> find_local_represent;
+	// for(int i = 0; i < list.size(); i++) {
+	// 	Literal& lit = list[i];
+	// 	if(!lit.getTrueOrNegated()) ss <<"~";
+	// 	for(auto lt = predictStore.begin(); lt != predictStore.end(); lt++) {
+	// 		if(lt->second == lit.getPredictId())
+	// 			ss<< lt->first;
+	// 	}
+	// 	ss<<"(";
+	// 	for (int j = 0; j < lit.paramList.size(); ++j)
+	// 	{
+	// 		if(lit.paramList[j].isUniverse) {
+	// 			if(find_local_represent.find(lit.paramList[j].universeId) == find_local_represent.end()) {
+	// 					find_local_represent[lit.paramList[j].universeId] = univeral_id_local_represent;
+	// 					ss <<"u"<<univeral_id_local_represent++;
+	// 			}
+	// 			else {
+	// 					ss <<"u"<<find_local_represent[lit.paramList[j].universeId];
+	// 			}
+	// 		}
+	// 		else ss<<lit.paramList[j].constNname;
+	// 		if(j != lit.paramList.size() - 1) ss<<",";
+	// 	}
+	// 	ss<<")";
+	//
+	// 	if(i != list.size()-1) ss<<" | ";
+	// }
+	// return ss.str();
 }
 
 void SentenceFOL::generalToCNF() {
@@ -268,22 +275,115 @@ bool find_a_substitution(
 	unordered_map<Element, Element>& replace1,
 	unordered_map<Element, Element>& replace2 ) {
 
-		for(int j = 0; j < elems1.size(); j++) {
-			Element& elem1 = elems1[j];
-			Element& elem2 = elems2[j];
-			if( (elem1.isUniverse && !elem2.isUniverse) || (elem2.isUniverse && !elem1.isUniverse)) {
-				if(elem1.isUniverse) replace1[elem1] = elem2;
-				else replace2[elem2] = elem1;
-			}
-			else if(!elem1.isUniverse && !elem2.isUniverse) {
-				// Conflict! skip this literal
-				// As we cannot assign val to a constant
-				if(elem1.constNname != elem2.constNname) return false;
+		// for(int j = 0; j < elems1.size(); j++) {
+		// 	Element& elem1 = elems1[j];
+		// 	Element& elem2 = elems2[j];
+		// 	if( (elem1.isUniverse && !elem2.isUniverse) || (elem2.isUniverse && !elem1.isUniverse)) {
+		// 		if(elem1.isUniverse) replace1[elem1] = elem2;
+		// 		else replace2[elem2] = elem1;
+		// 	}
+		// 	else if(!elem1.isUniverse && !elem2.isUniverse) {
+		// 		// Conflict! skip this literal
+		// 		// As we cannot assign val to a constant
+		// 		if(elem1.constNname != elem2.constNname) return false;
+		// 	}
+		// 	else {
+		// 		replace1[elem1] = elem2;
+		// 	}
+		// }
+		// return true;
+		int count = elems1.size();
+
+		vector< vector<Element> > sets;
+		unordered_map<string, long> belongs_to_set;
+		unordered_map<string, int> in_sentence;
+
+		for(int i = 0; i < count; i++) {
+			Element& elem1 = elems1[i];
+			Element& elem2 = elems2[i];
+			string e1 = elem1.stringify();
+			string e2 = elem2.stringify();
+
+			if(elem1.isUniverse) in_sentence[e1] = 1;
+			if(elem2.isUniverse) in_sentence[e2] = 2;
+
+			if( !elem1.isUniverse && !elem2.isUniverse) {
+				if(e1 != e2) return false;
 			}
 			else {
-				replace1[elem1] = elem2;
+				if(belongs_to_set.find(e1) == belongs_to_set.end()) {
+					if(belongs_to_set.find(e2) == belongs_to_set.end()) {
+						vector<Element> new_set;
+						new_set.push_back(elem1);
+						new_set.push_back(elem2);
+						sets.push_back(new_set);
+						belongs_to_set[e1] = sets.size()-1;
+						belongs_to_set[e2] = sets.size()-1;
+					}
+					else {
+						long setid = belongs_to_set[e2];
+						sets[setid].push_back(elem1);
+						belongs_to_set[e1] = setid;
+					}
+				}
+				else {
+					if( belongs_to_set.find(e2) == belongs_to_set.end() ) {
+						long setid = belongs_to_set[e1];
+						sets[setid].push_back(elem2);
+						belongs_to_set[e2] = setid;
+					}
+					else {
+						long setid1 = belongs_to_set[e1];
+						long setid2 = belongs_to_set[e2];
+						vector<Element>& set1 = sets[setid1];
+						vector<Element>& set2 = sets[setid2];
+						for(auto lt = set2.begin(); lt != set2.end(); lt++) {
+							belongs_to_set[(*lt).stringify()] = setid1;
+							set1.push_back(*lt);
+						}
+						set2.clear();
+					}
+				}
 			}
 		}
+
+
+		for(int i = 0; i < sets.size(); i++) {
+			vector<Element>& s = sets[i];
+			int const_count = 0;
+			Element change_to;
+
+			for(auto lt = s.begin(); lt != s.end(); lt++) {
+				if( !(*lt).isUniverse ) {
+					change_to = *lt;
+					const_count++;
+				}
+				else if(const_count == 0) {
+					change_to = *lt;
+				}
+				if(const_count > 1) return false;
+			}
+
+			for(auto lt = s.begin(); lt != s.end(); lt++) {
+				if( (*lt).isUniverse ) {
+					if(in_sentence[(*lt).stringify()] == 1) replace1[*lt] = change_to;
+					else replace2[*lt] = change_to;
+				}
+			}
+
+		}
+		// cout<<"change in sentence1"<<endl;
+		// for(auto lt = replace1.begin(); lt != replace1.end(); lt++) {
+		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
+		//   cout <<endl;
+		// }
+		// cout<<"change in sentence2"<<endl;
+		// for(auto lt = replace2.begin(); lt != replace2.end(); lt++) {
+		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
+		//   cout <<endl;
+		// }
+		// cout<<"change in sentence2 end"<<endl;
+
 		return true;
 }
 
@@ -291,6 +391,23 @@ void apply_a_substitution(vector<Literal>& list1, vector<Literal>& list2,
 	unordered_map<Element, Element>& replace1,
 	unordered_map<Element, Element>& replace2 ) {
 		// Each predicate
+		// cout << "Literal in sentence1"<<endl;
+		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
+		// cout << "Literal in sentence2"<<endl;
+		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
+		// cout<<"change in sentence1"<<endl;
+		// for(auto lt = replace1.begin(); lt != replace1.end(); lt++) {
+		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
+		//   cout <<endl;
+		// }
+		// cout<<"change in sentence2"<<endl;
+		// for(auto lt = replace2.begin(); lt != replace2.end(); lt++) {
+		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
+		//   cout <<endl;
+		// }
+		// cout<<"change in sentence2 end"<<endl;
+
+
 		for(int j = 0; j < list1.size(); j++) {
 			vector<Element>& elms = list1[j].getElements();
 			// Each literal
@@ -309,6 +426,13 @@ void apply_a_substitution(vector<Literal>& list1, vector<Literal>& list2,
 				}
 			}
 		}
+
+		// cout << "-----------after substitution" <<endl;
+		// cout << "Literal in sentence1"<<endl;
+		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
+		// cout << "Literal in sentence2"<<endl;
+		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
+
 }
 
 //Eliminate exactly same literals F(u1,A,B,u2) with F(u1,A,B,u2)
@@ -338,7 +462,30 @@ bool duplicateWithAncestors(string sentence, SENTENCE_ID_TYPE parent) {
 	return false;
 }
 
+void assign_new_univs(vector<Literal>& list ) {
+	// Id old to new
+	unordered_map<int, int> old_to_new;
+	for(int i = 0 ; i < list.size(); i++) {
+		for(int j = 0; j < list[i].paramList.size(); j++) {
+			Element  e = list[i].paramList[j];
+			if(e.isUniverse) {
+				if(old_to_new.find(e.universeId) == old_to_new.end()) {
+					UNIV_ID_TYPE new_id = universeId_generator.getNext();
+					old_to_new[e.universeId] = new_id;
+					list[i].paramList[j] = Element(new_id);
+				}
+				else {
+					list[i].paramList[j] = Element(old_to_new[e.universeId]);
+				}
+			}
+		}
+	}
+}
 
+// deal with A|B, ~B|A to A | A to A
+void collapse(vector<Literal>& list) {
+
+}
 
 // 0-cannot resolve
 // 1-resolved successfully
@@ -377,8 +524,19 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 
 		EliminateExactlySameLiterals(list1, list2);
 
+		// cout << "-----------after EliminateExactlySameLiterals" <<endl;
+		// cout << "Literal in sentence1"<<endl;
+		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
+		// cout << "Literal in sentence2"<<endl;
+		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
+
 		list1.insert( list1.end(), list2.begin(), list2.end() );
 		if(list1.size() == 0) return 2;
+
+		assign_new_univs(list1);
+
+		collapse(list1);
+
 		SentenceDNF newSentence(set_id);
 		for(int i = 0; i < list1.size(); i++) {
 			newSentence.add(list1[i]);

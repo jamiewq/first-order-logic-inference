@@ -39,7 +39,7 @@ public:
 
 	UNIV_ID_TYPE universeId;
 
-	string stringify() {
+	string stringify() const {
 		std::stringstream ss;
 		if(isUniverse) {
 			ss <<"u"<<universeId;
