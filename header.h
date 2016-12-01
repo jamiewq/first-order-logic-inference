@@ -197,7 +197,7 @@ public:
 	}
 
 	string stringify();
-
+	string stringify_local();
 	vector<Literal>& getLiterals() {
 		return list;
 	}

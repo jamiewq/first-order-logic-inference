@@ -100,37 +100,41 @@ string SentenceDNF::stringify() {
 		if(i != list.size()-1) ss<<" | ";
 	}
 	return ss.str();
-	//
-	// stringstream ss;
-	// int univeral_id_local_represent = 0;
-	// unordered_map<int, int> find_local_represent;
-	// for(int i = 0; i < list.size(); i++) {
-	// 	Literal& lit = list[i];
-	// 	if(!lit.getTrueOrNegated()) ss <<"~";
-	// 	for(auto lt = predictStore.begin(); lt != predictStore.end(); lt++) {
-	// 		if(lt->second == lit.getPredictId())
-	// 			ss<< lt->first;
-	// 	}
-	// 	ss<<"(";
-	// 	for (int j = 0; j < lit.paramList.size(); ++j)
-	// 	{
-	// 		if(lit.paramList[j].isUniverse) {
-	// 			if(find_local_represent.find(lit.paramList[j].universeId) == find_local_represent.end()) {
-	// 					find_local_represent[lit.paramList[j].universeId] = univeral_id_local_represent;
-	// 					ss <<"u"<<univeral_id_local_represent++;
-	// 			}
-	// 			else {
-	// 					ss <<"u"<<find_local_represent[lit.paramList[j].universeId];
-	// 			}
-	// 		}
-	// 		else ss<<lit.paramList[j].constNname;
-	// 		if(j != lit.paramList.size() - 1) ss<<",";
-	// 	}
-	// 	ss<<")";
-	//
-	// 	if(i != list.size()-1) ss<<" | ";
-	// }
-	// return ss.str();
+}
+
+
+string SentenceDNF::stringify_local() {
+
+	stringstream ss;
+	int univeral_id_local_represent = 0;
+	unordered_map<int, int> find_local_represent;
+	for(int i = 0; i < list.size(); i++) {
+		Literal& lit = list[i];
+		if(!lit.getTrueOrNegated()) ss <<"~";
+		for(auto lt = predictStore.begin(); lt != predictStore.end(); lt++) {
+			if(lt->second == lit.getPredictId())
+				ss<< lt->first;
+		}
+		ss<<"(";
+		for (int j = 0; j < lit.paramList.size(); ++j)
+		{
+			if(lit.paramList[j].isUniverse) {
+				if(find_local_represent.find(lit.paramList[j].universeId) == find_local_represent.end()) {
+						find_local_represent[lit.paramList[j].universeId] = univeral_id_local_represent;
+						ss <<"u"<<univeral_id_local_represent++;
+				}
+				else {
+						ss <<"u"<<find_local_represent[lit.paramList[j].universeId];
+				}
+			}
+			else ss<<lit.paramList[j].constNname;
+			if(j != lit.paramList.size() - 1) ss<<",";
+		}
+		ss<<")";
+
+		if(i != list.size()-1) ss<<" | ";
+	}
+	return ss.str();
 }
 
 void SentenceFOL::generalToCNF() {
@@ -490,9 +494,9 @@ string literal_internal_stringify(Literal& lit) {
 bool literals_have_same_pattern(Literal& l1, Literal& l2) {
 	string str1 = literal_internal_stringify(l1);
 	string str2 = literal_internal_stringify(l2);
-	cout << "comparing two literals pattern"<<endl;
-	cout << str1 <<endl;
-	cout << str2 <<endl;
+	// cout << "comparing two literals pattern"<<endl;
+	// cout << str1 <<endl;
+	// cout << str2 <<endl;
 	if(str1 == str2) return true;
 	return false;
 }
@@ -502,10 +506,10 @@ bool literals_have_same_pattern(Literal& l1, Literal& l2) {
 // 2 keep l2;
 int keepWhich(Literal l1, Literal l2, int pos_1, int pos_2, unordered_map<UNIV_ID_TYPE, bool>& uni_has_constrain, unordered_map<long, bool>& literal_only_contain_internal_constrain) {
 
-	for(auto lt = uni_has_constrain.begin(); lt != uni_has_constrain.end(); lt++) {
-	  cout << "u" <<lt->first << "\t -> "<< lt->second;
-	  cout <<endl;
-	}
+	// for(auto lt = uni_has_constrain.begin(); lt != uni_has_constrain.end(); lt++) {
+	//   cout << "u" <<lt->first << "\t -> "<< lt->second;
+	//   cout <<endl;
+	// }
 
 	if(literal_only_contain_internal_constrain[pos_1] && literal_only_contain_internal_constrain[pos_2]) {
 		if(literals_have_same_pattern(l1,l2)) {
@@ -634,6 +638,9 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 	vector<Literal> list2 = s2.getLiterals();
 	long list2_matched_position = -1;
 
+	int size1 = list1.size();
+	int size2 = list2.size();
+
 	// Unify and Resolution
 	for(int i = 0; i < list2.size(); i++) {
 		// Find first substitutable literal
@@ -661,11 +668,11 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 
 		EliminateExactlySameLiterals(list1, list2);
 
-		cout << "-----------after EliminateExactlySameLiterals" <<endl;
-		cout << "Literal in sentence1"<<endl;
-		for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
-		cout << "Literal in sentence2"<<endl;
-		for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
+		// cout << "-----------after EliminateExactlySameLiterals" <<endl;
+		// cout << "Literal in sentence1"<<endl;
+		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
+		// cout << "Literal in sentence2"<<endl;
+		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
 
 		list1.insert( list1.end(), list2.begin(), list2.end() );
 		if(list1.size() == 0) return 2;
@@ -674,14 +681,18 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 
 		collapse(list1);
 
+		if( !(list1.size() < size1 || list1.size() < size2) ) {
+			return 0;
+		}
+
 		SentenceDNF newSentence(set_id);
 		for(int i = 0; i < list1.size(); i++) {
 			newSentence.add(list1[i]);
 		}
 
 		for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
-			if(newSentence.stringify() == lt->second.stringify()) {
-				//cout <<"Already in sentenceStore"<<endl;
+			if(newSentence.stringify_local() == lt->second.stringify_local()) {
+				// cout <<"Already in sentenceStore"<<endl;
 				return 0;
 			}
 		}
@@ -697,7 +708,7 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 		sentenceStore[id] = newSentence;
 		myIndex.addSentence(id);
 		set_to_put.push_back(id);
-		cout<<"Get  " << id <<" by Resolve  "<<id1 << " with  "<< id2<<endl;
+		// cout<<"Get  " << id <<" by Resolve  "<<id1 << " with  "<< id2<<endl;
 		return 1;
 	}
 
