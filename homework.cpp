@@ -467,8 +467,158 @@ void assign_new_univs(vector<Literal>& list ) {
 	}
 }
 
+string literal_internal_stringify(Literal& lit) {
+	unordered_map<int, int> find_local_represent;
+	int univeral_id_local_represent = 0;
+	stringstream ss;
+	for (int j = 0; j < lit.paramList.size(); ++j) {
+		if(lit.paramList[j].isUniverse) {
+			if(find_local_represent.find(lit.paramList[j].universeId) == find_local_represent.end()) {
+				find_local_represent[lit.paramList[j].universeId] = univeral_id_local_represent;
+				ss <<"u"<<univeral_id_local_represent++;
+			}
+			else {
+				ss <<"u"<<find_local_represent[lit.paramList[j].universeId];
+			}
+		}
+		else ss<<lit.paramList[j].constNname;
+		if(j != lit.paramList.size() - 1) ss<<",";
+	}
+	return ss.str();
+}
+
+bool literals_have_same_pattern(Literal& l1, Literal& l2) {
+	string str1 = literal_internal_stringify(l1);
+	string str2 = literal_internal_stringify(l2);
+	cout << "comparing two literals pattern"<<endl;
+	cout << str1 <<endl;
+	cout << str2 <<endl;
+	if(str1 == str2) return true;
+	return false;
+}
+
+// 0 keep both;
+// 1 keep l1;
+// 2 keep l2;
+int keepWhich(Literal l1, Literal l2, int pos_1, int pos_2, unordered_map<UNIV_ID_TYPE, bool>& uni_has_constrain, unordered_map<long, bool>& literal_only_contain_internal_constrain) {
+
+	for(auto lt = uni_has_constrain.begin(); lt != uni_has_constrain.end(); lt++) {
+	  cout << "u" <<lt->first << "\t -> "<< lt->second;
+	  cout <<endl;
+	}
+
+	if(literal_only_contain_internal_constrain[pos_1] && literal_only_contain_internal_constrain[pos_2]) {
+		if(literals_have_same_pattern(l1,l2)) {
+			return 1;
+		}
+	}
+
+	bool keep1 = false;
+	bool keep2 = false;
+	for(int i = 0 ; i < l1.paramList.size(); i++) {
+		Element e1 = l1.paramList[i];
+		Element e2 = l2.paramList[i];
+		if( !e1.isUniverse && !e2.isUniverse ) {
+			if(e1.constNname != e2.constNname) return 0;
+		}
+		else {
+			if( !e1.isUniverse && e2.isUniverse ) {
+				if(uni_has_constrain[e2.universeId]) return 0;
+				else keep2 = true;
+			}
+			else if(!e2.isUniverse && e1.isUniverse ) {
+				if( uni_has_constrain[e1.universeId] ) return 0;
+				else keep1 = true;
+			}
+			else if( e1.isUniverse && e2.isUniverse ) {
+				if(e1.universeId == e2.universeId) {}
+				else if(uni_has_constrain[e1.universeId] && uni_has_constrain[e2.universeId]) return 0;
+				else if(uni_has_constrain[e1.universeId]) keep2 = true;
+				else if(uni_has_constrain[e2.universeId]) keep1 = true;
+			}
+		}
+	}
+	if(keep1 && keep2) {
+		// cout << l1.stringify() << " and " << l2.stringify() << " keep both" << endl;
+		return 0;
+	}
+	else if(keep1) {
+		// cout << l1.stringify() << " and " << l2.stringify() << " keep 1" << endl;
+		return 1;
+	}
+	else {
+		// cout << l1.stringify() << " and " << l2.stringify() << " keep 2" << endl;
+		return 2;
+	}
+}
+
 // deal with A|B, ~B|A to A | A to A
 void collapse(vector<Literal>& list) {
+	unordered_map<UNIV_ID_TYPE, bool> uni_has_constrain;
+	unordered_map<UNIV_ID_TYPE, int> uni_last_pos;
+	unordered_map<UNIV_ID_TYPE, bool> univ_only_contain_internal_constrain;
+	unordered_map<long, bool> literal_only_contain_internal_constrain;
+
+	for(int j = 0 ; j < list.size(); j++) {
+		for(int i = 0 ; i < list[j].paramList.size(); i++) {
+			if(list[j].paramList[i].isUniverse) {
+				UNIV_ID_TYPE univId = list[j].paramList[i].universeId;
+				if( uni_last_pos.find(univId) != uni_last_pos.end() ) {
+					if( uni_last_pos[univId] != j) {
+						univ_only_contain_internal_constrain[univId] = false;
+						uni_last_pos[univId] = j;
+					}
+				}
+				else {
+					univ_only_contain_internal_constrain[univId] = true;
+					uni_last_pos[univId] = j;
+				}
+
+				if(uni_has_constrain.find(univId) == uni_has_constrain.end() ) {
+					uni_has_constrain[univId] = false;
+				}
+				else uni_has_constrain[univId] = true;
+			}
+		}
+	}
+
+	for(int j = 0 ; j < list.size(); j++) {
+		literal_only_contain_internal_constrain[j] = true;
+		for(int i = 0 ; i < list[j].paramList.size(); i++) {
+			if(list[j].paramList[i].isUniverse) {
+				UNIV_ID_TYPE univId = list[j].paramList[i].universeId;
+				if(!univ_only_contain_internal_constrain[univId]) {
+					literal_only_contain_internal_constrain[j] = false;
+					break;
+				}
+			}
+		}
+	}
+
+	for(int i = 0; i < list.size(); ) {
+		Literal l1 = list[i];
+		int j = i+1;
+		for(; j < list.size(); ) {
+			Literal l2 = list[j];
+			if(l1.getPredictId() == l2.getPredictId() && l1.getTrueOrNegated() == l2.getTrueOrNegated()) {
+				int keep = keepWhich(l1, l2, i, j, uni_has_constrain, literal_only_contain_internal_constrain);
+				if(keep == 1) {
+					list.erase(list.begin() + j );
+				}
+				else if(keep == 2) {
+					list.erase(list.begin() + i );
+					break;
+				}
+				else {
+					j ++;
+				}
+			}
+			else j++;
+		}
+		if( j == list.size() ) {
+			i++;
+		}
+	}
 
 }
 

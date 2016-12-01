@@ -187,6 +187,17 @@ int main(int, char**) {
         for(int k = 0; k < set_aux.size(); k++) {
           SENTENCE_ID_TYPE sid = set_aux[k];
           SentenceDNF s = sentenceStore[sid];
+
+                    vector<Literal> list = s.getLiterals();
+                    cout << "before collapse"<<endl;
+                    for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
+                    collapse(list);
+                    cout << "after collapse"<<endl;
+                    for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
+                    cout << "after collapse end"<<endl;
+                    getchar();
+
+
           if(s.getLiterals().size() != 1 ) continue;
           vector<Literal> literals = s.getLiterals();
 
@@ -287,6 +298,21 @@ int main(int, char**) {
             SENTENCE_ID_TYPE sid = set_support[last++];
             SentenceDNF s = sentenceStore[sid];
             vector<Literal> literals = s.getLiterals();
+
+
+
+                vector<Literal> list = s.getLiterals();
+                cout << "before collapse"<<endl;
+                for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
+                collapse(list);
+                cout << "after collapse"<<endl;
+                for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
+                cout << "after collapse end"<<endl;
+                getchar();
+
+
+
+
             bool resolved = false;
             for(int i = 0; i < literals.size() && !conflict_found; i++) {
               Literal literal = literals[i];

@@ -27,7 +27,6 @@ typedef int SET_TYPE;
 // Declarations part
 int getPredIdByName(string name);
 int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SENTENCE_ID_TYPE id2, SET_TYPE set_id, vector<SENTENCE_ID_TYPE>& set_to_put);
-
 /* Element is the universal quatifier or assigned Const name */
 class Element {
 
@@ -370,6 +369,8 @@ public:
 	~Indexing() {}
 
 };
+
+void collapse(vector<Literal>& list);
 
 bool find_a_substitution(
 	vector<Element>& elems1, vector<Element>& elems2,
