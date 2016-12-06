@@ -1704,20 +1704,20 @@ int main(int, char**) {
     universeId_generator_origin = universeId_generator;
 
 
-/*
-    cout<< "======================== Indexing ========================" << endl;
-    cout<<myIndex.stringify()<<endl;
 
-    cout<< "======================== SUPPORT SET ========================" << endl;
-    for(int i = 0; i < set_support.size(); i++) {
-      cout<<sentenceStore[set_support[i]].stringify()<<endl;
-    }
+    // cout<< "======================== Indexing ========================" << endl;
+    // cout<<myIndex.stringify()<<endl;
+    //
+    // cout<< "======================== SUPPORT SET ========================" << endl;
+    // for(int i = 0; i < set_support.size(); i++) {
+    //   cout<<sentenceStore[set_support[i]].stringify()<<endl;
+    // }
+    //
+    // cout<< "======================== AUX SET ========================" << endl;
+    // for(int i = 0; i < set_aux.size(); i++) {
+    //   cout<<sentenceStore[set_aux[i]].stringify()<<endl;
+    // }
 
-    cout<< "======================== AUX SET ========================" << endl;
-    for(int i = 0; i < set_aux.size(); i++) {
-      cout<<sentenceStore[set_aux[i]].stringify()<<endl;
-    }
-*/
     for(int q = 0; q < query_size; q++) {
           sentenceStore = sentenceStore_origin;
           predictStore = predictStore_origin;
@@ -1738,7 +1738,7 @@ int main(int, char**) {
           yy_scan_string(a);
           yyparse();
 
-
+          //
         //   cout<< "-----------------------SENTENCE STORE -----------------------" << endl;
         //   for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
         //     cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify()<<endl;

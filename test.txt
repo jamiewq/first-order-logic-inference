@@ -1,4 +1,21 @@
 1
+A(P)
+2
+(~B(K))
+((A(x) | B(x)) | A(y))
+
+False
+
+1
+A(K)
+3
+(~B(K))
+(~C(J))
+(((A(x)|B(x))|C(y))|A(y))
+
+False
+
+1
 A(Cindy, Cindy)
 1
 (A(x,x) | A(Cindy,u))
@@ -84,3 +101,66 @@ D(Bob)
 (((~A(x))|(~C(y))) | D(z))
 
 True
+
+
+1
+A(Aa,Bb)
+3
+((A(x,y)&A(y,z))=>A(x,z))
+A(Aa,Cc)
+A(Cc,Bb)
+
+True
+
+1
+C(z)
+2
+(((~A(x)) | (~B(y))) | C(z))
+(A(x) | B(y))
+
+False
+
+
+1
+C(z)
+3
+(((~A(x)) | (~B(y))) | C(z))
+(A(x) | (~B(y)))
+B(K)
+
+True
+
+1
+C(z)
+3
+(((~A(x)) | (~B(y))) | C(z))
+(~(~(A(x) | (~B(y)))))
+(~(~(~(~B(K)))))
+
+True
+
+1
+Man(A)
+1
+(Man(x)|Man(y))
+
+True
+
+
+1
+~Man(A)
+3
+((A(John,x) | B(Bob,y) ) | (~Man(A)))
+(~A(John,Alice))
+(~B(Bob,Kim))
+
+True
+
+1
+~Man(A)
+3
+((A(John,x) | B(Bob,x) ) | (~Man(A)))
+(~A(John,Alice))
+(~B(Bob,Kim))
+
+False

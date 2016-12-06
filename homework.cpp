@@ -145,7 +145,7 @@ void SentenceFOL::generalToCNF() {
 			children_changed = false;
 			if(operat == OR) {
 				if(!op1->isSingle() && op1->operat == AND) {
-					//(t1.op1 & t1.op2) | (t2.op1 |/& .....)
+					//(t1.op1 & t1.op2) | (t2.op1 .....)
 					SentenceFOL *t1 = op1;
 					SentenceFOL *t2 = op2;
 					// TODO: FIX THE MEMORY LEAK
@@ -154,7 +154,7 @@ void SentenceFOL::generalToCNF() {
 					operat = AND;
 				}
 				else if(!op2->isSingle() && op2->operat == AND) {
-					// (t1.op1 |/& .....) | (t2.op1 & t2.op2)
+					// (t1.op1 .....) | (t2.op1 & t2.op2)
 					SentenceFOL *t1 = op1;
 					SentenceFOL *t2 = op2;
 					// TODO: FIX THE MEMORY LEAK
@@ -528,17 +528,17 @@ int keepWhich(Literal l1, Literal l2, int pos_1, int pos_2, unordered_map<UNIV_I
 		else {
 			if( !e1.isUniverse && e2.isUniverse ) {
 				if(uni_has_constrain[e2.universeId]) return 0;
-				else keep2 = true;
+				keep1 = true;
 			}
 			else if(!e2.isUniverse && e1.isUniverse ) {
 				if( uni_has_constrain[e1.universeId] ) return 0;
-				else keep1 = true;
+				keep2 = true;
 			}
 			else if( e1.isUniverse && e2.isUniverse ) {
 				if(e1.universeId == e2.universeId) {}
 				else if(uni_has_constrain[e1.universeId] && uni_has_constrain[e2.universeId]) return 0;
-				else if(uni_has_constrain[e1.universeId]) keep2 = true;
-				else if(uni_has_constrain[e2.universeId]) keep1 = true;
+				else if(uni_has_constrain[e1.universeId]) keep1 = true;
+				else if(uni_has_constrain[e2.universeId]) keep2 = true;
 			}
 		}
 	}
