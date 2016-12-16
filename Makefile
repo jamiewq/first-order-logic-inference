@@ -1,5 +1,5 @@
-run: lex.yy.c fol.tab.c fol.tab.h header.h homework.cpp
-	g++ -std=c++11 -o homework fol.tab.c homework.cpp lex.yy.c -ll; ./homework
+run: lex.yy.c fol.tab.c fol.tab.h header.h main.cpp
+	g++ -std=c++11 -o fol fol.tab.c main.cpp lex.yy.c -ll; ./fol
 
 fol.tab.c fol.tab.h: fol.y
 	bison -d fol.y
