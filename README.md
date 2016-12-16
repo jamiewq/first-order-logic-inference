@@ -72,7 +72,11 @@ No TRUE, FALSE,True,False literals in the input
 '=', '<=>' operators are not valid in the input
 
 
-### Getting Started
+## Getting Started
+~~~
+With input.txt containing Kowledge and Queries:
+$ ./fol
+~~~
 Format for input.txt:
 
 ~~~<NQ = NUMBER OF QUERIES><QUERY 1>…<QUERY NQ><NS = NUMBER OF GIVEN SENTENCES IN THE KNOWLEDGE BASE><SENTENCE 1>…<SENTENCE NS>
