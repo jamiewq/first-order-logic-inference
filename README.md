@@ -1,6 +1,18 @@
 # first-order-logic-inference
 ## Overview
-This is a **subset** of [First Order Logic (FOL)](https://en.wikipedia.org/wiki/First-order_logic) inference engine. With a bunch of knowledge base sentences, it will tell if a query is True or False according to the knowledge base.
+
+This is a **subset** of [First Order Logic (FOL)](https://en.wikipedia.org/wiki/First-order_logic) inference engine. With a bunch of knowledge base sentences, it will tell if a query is True or False according to the knowledge base. This project utilized Universal **Resolution** Law of FOL and **Refutation Proof**.
+
+Interesting Example:
+
+~~~
+( Phd(x) => HighQualified(x) )
+( Phd(x) | EarlyEarnings(x) )
+( HighQualified(x) => Rich(x) )
+( EarlyEarnings(x) => Rich(x) )
+
+It can prove : Rich(You) is True
+~~~
 
 This project is currently limited:
 
@@ -32,6 +44,33 @@ $ g++ -std=c++11 -o fol fol.tab.c main.cpp lex.yy.c -ll
 
 or $ make
 ~~~
+
+### Input Restriction
+Any operator and its operands will always be surrounded by a parenthesis. Parenthesis will only appear in test cases when there is an operator with an operand or operands. So we don't worry about operator priority and parentheses confusions for now.
+
+For example:
+
+~~~
+(A(x) & B(x)) Valid
+A(x) & B(x) InValid
+((A(x) & B(x)) => C(x)) Valid
+(A(x) | B(x)) => C(x) InValid
+(~A(x)) Valid
+~A(x) InValid
+(A(x)) InValid
+A(x) Valid
+~~~~A(x) InValid
+(~(~(~(~A(x))))) Valid
+No nested Predicates.
+For example:
+A(x,y) Valid 
+A(B(x), y) InValid
+~~~
+
+No TRUE, FALSE,True,False literals in the input
+
+'=', '<=>' operators are not valid in the input
+
 
 ### Getting Started
 Format for input.txt:

@@ -1,7 +1,7 @@
 1
-D(X)
+Rich(You)
 4
-(((A(x)|B(y))|C(z))|D(q))
-(((~A(z))|B(x))|C(u))
-(((~B(x))|C(y))| D(z))
-((~C(x))| D(y))
+(Phd(x) => HighQualified(x))
+(Phd(x) | EarlyEarnings(x))
+(HighQualified(x) => Rich(x))
+(EarlyEarnings(x) => Rich(x))
