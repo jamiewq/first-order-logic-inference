@@ -1628,7 +1628,7 @@ int main(int, char**) {
     for(int i = 0; i < kb_size; i++) {
       std::getline(in_file,kb[i]);
       // We need two NULL ending to make sure it works
-      //http://stackoverflow.com/questions/780676/string-input-to-flex-lexer
+      // http://stackoverflow.com/questions/780676/string-input-to-flex-lexer
       kb[i].push_back('\0');
       kb[i].push_back('\0');
       char *a=new char[kb[i].size()+2];
@@ -1644,17 +1644,6 @@ int main(int, char**) {
           SENTENCE_ID_TYPE sid = set_aux[k];
           SentenceDNF s = sentenceStore[sid];
 
-                    // vector<Literal> list = s.getLiterals();
-                    // cout << "before collapse"<<endl;
-                    // for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
-                    // collapse(list);
-                    // cout << "after collapse"<<endl;
-                    // for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
-                    // cout << "after collapse end"<<endl;
-                    // getchar();
-
-
-        //   if(s.getLiterals().size() != 1 ) continue;
           vector<Literal> literals = s.getLiterals();
 
           bool resolved = false;
@@ -1663,26 +1652,24 @@ int main(int, char**) {
             vector<SENTENCE_ID_TYPE> foundlist = myIndex.find(literal.getPredictId(), !literal.getTrueOrNegated());
             for(int j = 0; j < foundlist.size(); j++) {
               SENTENCE_ID_TYPE id = foundlist[j];
-            //   if( s.isMyParent(id) ) continue;
-            //   if( s.getLiterals().size() != 1 && sentenceStore[id].getLiterals().size() != 1) continue;
               int t = resolution_and_put_result_into_support_set(sid, i, id, AUX_SET, set_aux);
               // resolved successfully
               if(t == 1) {
                 resolved = true;
 
-                // for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
-                //   cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify();
-                //   cout << "\t parent : ";
-                //   for(auto ll = lt->second.parents.begin(); ll != lt->second.parents.end(); ll++) {
-                //     cout << " S_"<< *ll ;
-                //   }
-                //   cout <<endl;
-                // }
-                // getchar();
+                for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
+                  cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify();
+                  cout << "\t parent : ";
+                  for(auto ll = lt->second.parents.begin(); ll != lt->second.parents.end(); ll++) {
+                    cout << " S_"<< *ll ;
+                  }
+                  cout <<endl;
+                }
+                getchar();
 
               }
               else if (t==2) {
-                // cout<<"Invalid input, KB has Conflict" <<endl;
+                cout<<"Invalid input, KB has Conflict" <<endl;
                 return 1;
               }
             }
@@ -1705,18 +1692,18 @@ int main(int, char**) {
 
 
 
-    // cout<< "======================== Indexing ========================" << endl;
-    // cout<<myIndex.stringify()<<endl;
-    //
-    // cout<< "======================== SUPPORT SET ========================" << endl;
-    // for(int i = 0; i < set_support.size(); i++) {
-    //   cout<<sentenceStore[set_support[i]].stringify()<<endl;
-    // }
-    //
-    // cout<< "======================== AUX SET ========================" << endl;
-    // for(int i = 0; i < set_aux.size(); i++) {
-    //   cout<<sentenceStore[set_aux[i]].stringify()<<endl;
-    // }
+    cout<< "======================== Indexing ========================" << endl;
+    cout<<myIndex.stringify()<<endl;
+
+    cout<< "======================== SUPPORT SET ========================" << endl;
+    for(int i = 0; i < set_support.size(); i++) {
+      cout<<sentenceStore[set_support[i]].stringify()<<endl;
+    }
+
+    cout<< "======================== AUX SET ========================" << endl;
+    for(int i = 0; i < set_aux.size(); i++) {
+      cout<<sentenceStore[set_aux[i]].stringify()<<endl;
+    }
 
     for(int q = 0; q < query_size; q++) {
           sentenceStore = sentenceStore_origin;
@@ -1730,7 +1717,7 @@ int main(int, char**) {
 
           current_set_to_put = SUPPORT_SET;
           // We need two NULL ending to make sure it works
-          //http://stackoverflow.com/questions/780676/string-input-to-flex-lexer
+          // http://stackoverflow.com/questions/780676/string-input-to-flex-lexer
           querys[q].push_back('\0');
           querys[q].push_back('\0');
           char *a=new char[querys[q].size()+2];
@@ -1738,36 +1725,20 @@ int main(int, char**) {
           yy_scan_string(a);
           yyparse();
 
-          //
-        //   cout<< "-----------------------SENTENCE STORE -----------------------" << endl;
-        //   for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
-        //     cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify()<<endl;
-        //   }
-
+          cout<< "-----------------------SENTENCE STORE -----------------------" << endl;
+          for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
+            cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify()<<endl;
+          }
 
           int last = 0;
           bool conflict_found = false;
           while(!conflict_found) {
-    /*
+
             cout<< "======================== REASONING STEP ========================" << endl;
-    */
+
             SENTENCE_ID_TYPE sid = set_support[last++];
             SentenceDNF s = sentenceStore[sid];
             vector<Literal> literals = s.getLiterals();
-
-
-
-                // vector<Literal> list = s.getLiterals();
-                // cout << "before collapse"<<endl;
-                // for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
-                // collapse(list);
-                // cout << "after collapse"<<endl;
-                // for(int i = 0; i < list.size(); i++) cout << list[i].stringify() << endl;
-                // cout << "after collapse end"<<endl;
-                // getchar();
-
-
-
 
             bool resolved = false;
             for(int i = 0; i < literals.size() && !conflict_found; i++) {
@@ -1775,23 +1746,20 @@ int main(int, char**) {
               vector<SENTENCE_ID_TYPE> foundlist = myIndex.find(literal.getPredictId(), !literal.getTrueOrNegated());
               for(int j = 0; j < foundlist.size() && !conflict_found; j++) {
                 SENTENCE_ID_TYPE id = foundlist[j];
-                // if( s.isMyParent(id) ) continue;
-                // if( s.getLiterals().size() != 1 && sentenceStore[id].getLiterals().size() != 1) continue;
                 int t = resolution_and_put_result_into_support_set(sid, i, id, SUPPORT_SET, set_support);
                 // resolved successfully
                 if(t == 1) {
                   resolved = true;
 
-                //   for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
-                //     cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify();
-                //     cout << "\t parent : ";
-                //     for(auto ll = lt->second.parents.begin(); ll != lt->second.parents.end(); ll++) {
-                //       cout << " S_"<< *ll ;
-                //     }
-                //     cout <<endl;
-                //   }
-                //   getchar();
-
+                  for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
+                    cout << lt->first << "\t"<< (lt->second.inSet() == AUX_SET? "AUX_SET": "SUPPORT_SET")<<"\t\t" << lt->second.stringify();
+                    cout << "\t parent : ";
+                    for(auto ll = lt->second.parents.begin(); ll != lt->second.parents.end(); ll++) {
+                      cout << " S_"<< *ll ;
+                    }
+                    cout <<endl;
+                  }
+                  getchar();
                 }
                 else if (t==2) {
                   conflict_found = true;
@@ -1802,19 +1770,21 @@ int main(int, char**) {
 
             if(conflict_found) {
 
-            //   cout<<"END, GET CONFLICT" <<endl;
+              cout<<"END, GET CONFLICT" <<endl;
+              cout<<"ORIGIN QUERY IS : TRUE" <<endl;
 
               out_file << "TRUE" <<endl;
-              //getchar();
+              getchar();
               break;
             }
             else if(!resolved && last == set_support.size()) {
 
-            //   cout<<"CANNOT GO FORWARD !!!! WE CANNOT RESOLVE THIS SENTENCE:" <<endl;
-            //   cout<<sid<<". "<<s.stringify()<<endl;
+              cout<<"CANNOT GO FORWARD !!!! WE CANNOT RESOLVE THIS SENTENCE:" <<endl;
+              cout<<sid<<". "<<s.stringify()<<endl;
+              cout<<"ORIGIN QUERY IS : FALSE" <<endl;
 
               out_file << "FALSE" <<endl;
-              //getchar();
+              getchar();
               break;
             }
         }

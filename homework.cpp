@@ -1,7 +1,5 @@
 #include "header.h"
 
-// Code part
-
 extern unordered_map<SENTENCE_ID_TYPE, SentenceDNF> sentenceStore;
 extern unordered_map<string, PRED_ID_TYPE> predictStore;
 extern vector<SENTENCE_ID_TYPE> set_support;
@@ -203,17 +201,9 @@ void SentenceFOL::walkInNegation() {
 }
 
 bool SentenceFOL::addToKB(SET_TYPE set) {
-	// cout <<"origin"<<endl;
-	// cout<<stringify()<<endl;
 	eliminateImplication();
-	// cout <<"eliminateImplication"<<endl;
-	// cout<<stringify()<<endl;
 	walkInNegation();
-	// cout <<"walkInNegation"<<endl;
-	// cout<<stringify()<<endl;
 	generalToCNF();
-	// cout <<"generalToCNF"<<endl;
-	// cout<<stringify()<<endl;
 	putCNFIntoSentenceStore(set);
 	return true;
 }
@@ -361,17 +351,6 @@ bool find_a_substitution(
 			}
 
 		}
-		// cout<<"change in sentence1"<<endl;
-		// for(auto lt = replace1.begin(); lt != replace1.end(); lt++) {
-		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
-		//   cout <<endl;
-		// }
-		// cout<<"change in sentence2"<<endl;
-		// for(auto lt = replace2.begin(); lt != replace2.end(); lt++) {
-		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
-		//   cout <<endl;
-		// }
-		// cout<<"change in sentence2 end"<<endl;
 
 		return true;
 }
@@ -379,23 +358,6 @@ bool find_a_substitution(
 void apply_a_substitution(vector<Literal>& list1, vector<Literal>& list2,
 	unordered_map<Element, Element>& replace1,
 	unordered_map<Element, Element>& replace2 ) {
-		// Each predicate
-		// cout << "Literal in sentence1"<<endl;
-		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
-		// cout << "Literal in sentence2"<<endl;
-		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
-		// cout<<"change in sentence1"<<endl;
-		// for(auto lt = replace1.begin(); lt != replace1.end(); lt++) {
-		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
-		//   cout <<endl;
-		// }
-		// cout<<"change in sentence2"<<endl;
-		// for(auto lt = replace2.begin(); lt != replace2.end(); lt++) {
-		//   cout << (lt->first).stringify() << "\t -> "<< (lt->second).stringify();
-		//   cout <<endl;
-		// }
-		// cout<<"change in sentence2 end"<<endl;
-
 
 		for(int j = 0; j < list1.size(); j++) {
 			vector<Element>& elms = list1[j].getElements();
@@ -416,15 +378,9 @@ void apply_a_substitution(vector<Literal>& list1, vector<Literal>& list2,
 			}
 		}
 
-		// cout << "-----------after substitution" <<endl;
-		// cout << "Literal in sentence1"<<endl;
-		// for(int i = 0; i < list1.size(); i++) cout << list1[i].stringify() << endl;
-		// cout << "Literal in sentence2"<<endl;
-		// for(int i = 0; i < list2.size(); i++) cout << list2[i].stringify() << endl;
-
 }
 
-//Eliminate exactly same literals F(u1,A,B,u2) with F(u1,A,B,u2)
+// Eliminate exactly same literals F(u1,A,B,u2) with F(u1,A,B,u2)
 void EliminateExactlySameLiterals(vector<Literal>& list1, vector<Literal>& list2) {
 	set<string> s1_literals;
 	if(list2.size() == 0 || list1.size() == 0) return;
@@ -433,7 +389,6 @@ void EliminateExactlySameLiterals(vector<Literal>& list1, vector<Literal>& list2
 	}
 	for(int i = 0 ; i < list2.size();) {
 			if(s1_literals.find(list2[i].stringify()) != s1_literals.end() ) {
-				//cout <<"found" <<endl;
 				list2.erase(list2.begin() + i);
 			}
 			else i++;
@@ -452,7 +407,6 @@ bool duplicateWithAncestors(string sentence, SENTENCE_ID_TYPE parent) {
 }
 
 void assign_new_univs(vector<Literal>& list ) {
-	// Id old to new
 	unordered_map<int, int> old_to_new;
 	for(int i = 0 ; i < list.size(); i++) {
 		for(int j = 0; j < list[i].paramList.size(); j++) {
@@ -494,9 +448,6 @@ string literal_internal_stringify(Literal& lit) {
 bool literals_have_same_pattern(Literal& l1, Literal& l2) {
 	string str1 = literal_internal_stringify(l1);
 	string str2 = literal_internal_stringify(l2);
-	// cout << "comparing two literals pattern"<<endl;
-	// cout << str1 <<endl;
-	// cout << str2 <<endl;
 	if(str1 == str2) return true;
 	return false;
 }
@@ -505,11 +456,6 @@ bool literals_have_same_pattern(Literal& l1, Literal& l2) {
 // 1 keep l1;
 // 2 keep l2;
 int keepWhich(Literal l1, Literal l2, int pos_1, int pos_2, unordered_map<UNIV_ID_TYPE, bool>& uni_has_constrain, unordered_map<long, bool>& literal_only_contain_internal_constrain) {
-
-	// for(auto lt = uni_has_constrain.begin(); lt != uni_has_constrain.end(); lt++) {
-	//   cout << "u" <<lt->first << "\t -> "<< lt->second;
-	//   cout <<endl;
-	// }
 
 	if(literal_only_contain_internal_constrain[pos_1] && literal_only_contain_internal_constrain[pos_2]) {
 		if(literals_have_same_pattern(l1,l2)) {
@@ -542,18 +488,9 @@ int keepWhich(Literal l1, Literal l2, int pos_1, int pos_2, unordered_map<UNIV_I
 			}
 		}
 	}
-	if(keep1 && keep2) {
-		// cout << l1.stringify() << " and " << l2.stringify() << " keep both" << endl;
-		return 0;
-	}
-	else if(keep1) {
-		// cout << l1.stringify() << " and " << l2.stringify() << " keep 1" << endl;
-		return 1;
-	}
-	else {
-		// cout << l1.stringify() << " and " << l2.stringify() << " keep 2" << endl;
-		return 2;
-	}
+	if(keep1 && keep2)  return 0;
+	else if(keep1) return 1;
+	else return 2;
 }
 
 // deal with A|B, ~B|A to A | A to A
@@ -692,7 +629,7 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 
 		for(auto lt = sentenceStore.begin(); lt != sentenceStore.end(); lt++) {
 			if(newSentence.stringify_local() == lt->second.stringify_local()) {
-				// cout <<"Already in sentenceStore"<<endl;
+				// Already in sentenceStore
 				return 0;
 			}
 		}
@@ -708,7 +645,7 @@ int resolution_and_put_result_into_support_set(SENTENCE_ID_TYPE id1, long p1, SE
 		sentenceStore[id] = newSentence;
 		myIndex.addSentence(id);
 		set_to_put.push_back(id);
-		// cout<<"Get  " << id <<" by Resolve  "<<id1 << " with  "<< id2<<endl;
+		cout<<"Get  " << id <<" by Resolve  "<<id1 << " with  "<< id2<<endl;
 		return 1;
 	}
 
